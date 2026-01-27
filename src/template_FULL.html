@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do Application</title>
+</head>
+<body>
+
+    <!-- <dialog class="task-modal"> -->
+
+        <div class="task-modal">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h1>Add / Update Task</h1>
+                    <img id="closeIcon" class="settings-icon" src="media/icons/close_grey.svg" height="16px">
+                </div>
+                
+                    <div class="modal-line"></div>
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-name" autofocus>Task Name:</label>
+                        <input id="task-name" type="text">
+                </div>
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-desc">Task Description:</label>
+                        <input id="task-desc" type="text">
+                </div>
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-date">Due Date:</label>
+                        <input id="task-date" type="date"> <!--use calendar plugin-->
+                </div>
+
+                <div class="modal-element">
+                    <label for="task-priority" class="label-text">Priority</label>
+                        <select name="task-priority" id="task-priority">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                </div>
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-tags">Tags:</label> <!--look up how to auto-fill existing tags-->
+                        <input id="task-tags" type="text">
+                </div>
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-comments">Comments:</label>
+                        <textarea id="task-comments" type="text" maxlength="300"></textarea>
+                </div>
+
+                <div class="modal-element">
+                    <div id="modal-comments">
+                        <label class="label-text" for="task-comments">Saved Comments:</label>
+                            <div class="saved-comment">
+                                <p>This is a comment left by a previous person adding or updating the task.</p>
+                                <br>
+                                <div class="modal-line"></div>
+                            </div>
+                            <div class="saved-comment">
+                                <p>This is a comment left by a previous person adding or updating the task. It is a longer test than the first one.</p>
+                                <br>
+                                <div class="modal-line"></div>
+                            </div>
+                        
+                    </div>
+                </div>
+
+                <div class="modal-element">
+                    <button class="save-btn" role="button">Save</button>
+                    <button class="delete-btn" role="button">Delete</button>
+                </div>
+
+            </div>
+        </div>
+
+    <!-- </dialog> -->
+
+    <!-- STOP - Designing modal dialog to appear on edit button or task -->
+
+    <main>
+
+        <div class="sidebar">
+
+                <div class="side-header">
+                    <img class="user-icon" src="./media/icons/user_blue.svg">
+                    <h2>Gary Johnson</h2>
+                    <img class="settings-icon" src="media/icons/settings_grey.svg" height="16px">
+                </div>
+
+                <div class="side-line"></div>
+
+                <div id="sideTaskBtn" class="side-task">
+                    <div class="add-task"></div>
+                    <img class="task-icon" src="./media/icons/add_circle_black.svg">
+                    <span>Add Task</span>
+                </div>
+
+                <div class="side-line"></div>
+
+                <div class="side-actions">
+                        <ul>
+                            <li>Projects</li>
+                            <li>Today</li>
+                            <li>Calendar</li>
+                            <li>Tags</li>
+                        </ul>
+                </div>
+
+                <div class="side-line"></div>
+
+                <div class="side-projects">
+                    <h3>Projects</h3>
+                    <ul>
+                        <li>Project Name</li>
+                        <li>Another Project</li>
+                        <li>Project 666</li>
+                    </ul>
+                </div>
+
+                <div class="side-line"></div>
+
+                <div class="side-tags">
+                    <h3>Tags</h3>
+                    <ul>
+                        <li>#stuff</li>
+                        <li>#to do</li>
+                        <li>#work</li>
+                        <li>#sports</li>
+                    </ul>
+                </div>
+
+                <div class="side-line"></div>
+
+                <div class="side-archive">Archive</div>
+
+        </div>
+
+        <div class="main">
+
+            <div class="project-header">
+                <span class="bold">Parent Project</span><span> / Child Project</span>
+            </div>
+            <div class="main-content">
+                <h1>Child Project</h1>
+                
+                <div class="main-line"></div>
+
+                <!-- Initial Add Task only for when project is empty-->
+                <div id="mainTaskBtn" class="add-task">
+                    <img class="task-icon" src="./media/icons/add_circle_black.svg">
+                    <span>Add Task</span>
+                </div>
+
+                <div class="section">
+                    <h3>Section Name</h3>
+
+                    <div class="task">
+
+                        <div class="task-title">Task Title</div>
+                        <div class="task-desc">Description of task.</div>
+
+                        <div class="task-info">
+                            <div class="task-date">02/10/1990</div>
+                            <div id="task-priority">
+                                <img class="task-icon" src="./media/icons/priority_high.svg">
+                                <span>Priority</span>
+                            </div>
+                            <div class="task-tags">#newstuff</div>
+                            <div class="task-comments">
+                                <img class="task-icon" src="./media/icons/comment_black.svg">
+                                <span>0</span>
+                            </div>
+                            <div class="task-edit-del">
+                                <img class="task-icon" src="./media/icons/edit_grey.svg">
+                                <img class="task-icon" src="./media/icons/delete_grey.svg">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="task">
+
+                        <div class="task-title">Task Title</div>
+                        <div class="task-desc">Description of task.</div>
+
+                        <div class="task-info">
+                            <div class="task-date">02/10/1990</div>
+                            <div class="task-priority">
+                                <img class="task-icon" src="./media/icons/priority_low.svg">
+                                <span>Priority</span>
+                            </div>
+                            <div class="task-tags">#newstuff</div>
+                            <div class="task-comments">
+                                <img class="task-icon" src="./media/icons/comment_green.svg">
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                    </div>
+                
+                <!-- Display add task at end of each section to preselect section to add to -->
+                <div class="add-task">
+                    <img class="task-icon" src="./media/icons/add_circle_black.svg">
+                    <span>Add Task</span>
+                </div>
+
+                <div class="section-line"></div>
+
+                <div class="section">
+                    <h3>New Section Name</h3>
+
+                    <div class="task">
+
+                        <div class="task-title">Task Title</div>
+                        <div class="task-desc">Description of task.</div>
+
+                        <div class="task-info">
+                            <div class="task-date">02/10/1990</div>
+                            <div class="task-priority">
+                                <img class="task-icon" src="./media/icons/priority_high.svg">
+                                <span>Priority</span>
+                            </div>
+                            <div class="task-tags">#newstuff</div>
+                            <div class="task-comments">
+                                <img class="task-icon" src="./media/icons/comment_green.svg">
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="task">
+
+                        <div class="task-title">Task Title</div>
+                        <div class="task-desc">Description of task.</div>
+
+                        <div class="task-info">
+                            <div class="task-date">02/10/1990</div>
+                            <div class="task-priority">
+                                <img class="task-icon" src="./media/icons/priority_high.svg">
+                                <span>Priority</span>
+                            </div>
+                            <div class="task-tags">#newstuff</div>
+                            <div class="task-comments">
+                                <img class="task-icon" src="./media/icons/comment_green.svg">
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="task">
+
+                        <div class="task-title">Task Title</div>
+                        <div class="task-desc">Description of task.</div>
+
+                        <div class="task-info">
+                            <div class="task-date">02/10/1990</div>
+                            <div class="task-priority">
+                                <img class="task-icon" src="./media/icons/priority_high.svg">
+                                <span>Priority</span>
+                            </div>
+                            <div class="task-tags">#newstuff</div>
+                            <div class="task-comments">
+                                <img class="task-icon" src="./media/icons/comment_green.svg">
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                
+
+                <!-- Display add task at end of each section to preselect section to add to -->
+                <div class="add-task">
+                    <img class="task-icon" src="./media/icons/add_circle_black.svg">
+                    <span>Add Task</span>
+                </div>
+
+            </div>
+                
+        </div>
+    </main>
+</body>
+</html>
