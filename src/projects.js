@@ -1,13 +1,3 @@
-/*
-projects
-    tasks
-        title
-        description
-        priority
-        date
-        tags
-        comments
-*/
 // import { format } from "date-fns";
 
 import { be } from "date-fns/locale";
@@ -23,7 +13,7 @@ class Task {
         this.date = date;
         this.priority = priority;
         this.tags = tags;
-        this.comments = comments;
+        this.comments = comments || [];
         this.id = crypto.randomUUID();
     };
 }
@@ -38,13 +28,18 @@ class Project {
     addTask(title, description, date, priority, tags, comments, id) {
         let newTask = new Task(title, description, date, priority, tags, comments, id);
         
-            if (comments === '') {
-            } else {
-                const commentsArr = [];
-                commentsArr.push(comments);
+            const commentsArr = [];
+
+                // If comments is empty, push empty array, not empty string to commentsArr.
+                if (comments === '') {
+                    comments = [];
+                } else {
+                    commentsArr.push(comments);
+                }
+
+                // commentsArr.push(comments);
                 newTask.comments = commentsArr;
-            };
-            
+
         this.tasks.push(newTask);
 
         // NOTE - Maybe JSON.parse for pulling existing array and updating - research needed.
@@ -59,6 +54,35 @@ class Project {
     pushTask(task) {
         this.tasks.push(task);
     }
+
+    editTask(title, description, date, priority, tags, comments, id) {
+        // Pull tasks array, find array with id, update data.
+        const targetId = id;
+        const foundTask = this.tasks.find(item => item.id === targetId);
+
+        const commentsArr = [];
+
+        // If comments is empty, push empty array, not empty string to commentsArr.
+        // Push existing comments and new comments to commentsArr.
+        if (comments === '') {
+            comments = [];
+            console.log('test no comments')
+        } else {
+            commentsArr.push(foundTask.comments);
+            commentsArr.push(comments);
+        };
+
+        if (foundTask) {
+            foundTask.title = title;
+            foundTask.description = description;
+            foundTask.date = date;
+            foundTask.priority = priority;
+            foundTask.tags = tags;
+            foundTask.comments = commentsArr;
+        } else {
+            console.log('Task not found');
+    };
+};
 
     removeTask(id) {
         this.id = id;

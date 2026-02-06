@@ -135,6 +135,7 @@ h2 {
 #side-task span {
     position: relative;
     top: 1px;
+    font-weight: bold;
 }
 
 h3 {
@@ -161,11 +162,16 @@ h3 {
     padding: 20px;
 }
 
-.main-line {
+.main-line, .end-line {
     border-top: 2px solid rgb(111, 120, 251);
     width: 100%;
     margin: 1em 0;
 }
+.end-line {
+    border-top: 2px solid #d2d2d2;
+    padding-bottom: 20px;
+}
+
 
 .section-line {
     border-top: 2px solid rgb(166, 172, 255);
@@ -189,16 +195,50 @@ h1 {
 }
 
 .add-task {
-    padding: 10px;
+    padding: 10px 0 20px 0;
 }
 span {
     position: relative;
     top: 2px;
+    font-weight: bold;
+    transition: color 0.15s ease;
 }
+span:hover {
+    color: #2854C5;
+}
+
 .task-icon {
     height: 18px;
+    width: 18px;
     float: left;
     padding-right: 0.4em;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    transition: background-image 0.15s ease;
+}
+
+.edit-event {
+    background-image: url("./media/icons/edit_grey.svg");
+}
+.edit-event:hover {
+    background-image: url("./media/icons/edit_green.svg");
+}
+
+.delete-event {
+    background-image: url("./media/icons/delete_grey.svg");
+}
+.delete-event:hover {
+    background-image: url("./media/icons/delete_red.svg");
+}
+
+.comments-event {
+    background-image: url("./media/icons/comment_black.svg");
+        outline: none;
+}
+.comments-event:hover {
+    background-image: url("./media/icons/comment_blue.svg");
+    outline: none;
 }
 
 .section {
@@ -269,9 +309,9 @@ span {
     gap: 0.4em;
 }
 
-.task-edit-del {
+/* .task-edit-del {
     gap: 0.8em;
-}
+} */
 
 /* ------ MODALS ------ */
 .task-modal {
@@ -333,7 +373,7 @@ span {
     font-weight: bold;
     font-size: 14px;
     color:  rgb(55, 55, 55);
-    padding-bottom: 3px;
+    padding: 6px 0 4px 0;
 }
 
 .modal-content label {
@@ -352,17 +392,21 @@ textarea {
 }
 
 .saved-comment {
-    padding: 5px 0 5px 0;
+    padding: 0 0 10px 0;
     font-size: 14px;
 }
 
-.modal-line {
+.modal-line, .comments-line {
     border-top: 2px solid rgb(111, 120, 251);
     width: 100%;
+    padding: 0 0 10px 0;
+}
+.comments-line {
+    border-top: 2px solid #d2d2d2;
 }
 
 /* ------ BUTTONS ------- */
-.save-btn {
+.save-btn, .modal-save-btn {
   appearance: none;
   background-color: #2ea44f;
   border: 1px solid rgba(27, 31, 35, .15);

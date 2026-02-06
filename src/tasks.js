@@ -1,7 +1,5 @@
+import { el } from "date-fns/locale";
 import blackCircle from "./media/icons/add_circle_black.svg";
-import blackComment from "./media/icons/comment_black.svg";
-import greyEdit from "./media/icons/edit_grey.svg";
-import greyDel from "./media/icons/delete_grey.svg";
 
 function buildTask(project) {
 
@@ -68,50 +66,63 @@ function buildTask(project) {
             taskPriority.setAttribute('id', 'task-priority');
                 taskInfo.append(taskPriority);
 
+        // Check for single/mult tags and push to array.
         const taskTags = document.createElement('div');
             taskTags.setAttribute('class', 'task-tags');
-            taskTags.innerText = `#${item.tags}`;
-                taskInfo.append(taskTags);
+
+            let tagsLength = item.tags.length;
+            let tagsArr = item.tags;
+            let taskHolder = [];
+
+            if (typeof tagsArr === 'string') {
+                taskHolder.push(`#${item.tags}`);
+            } else {
+                for (let t = 0; t < tagsLength; t++) {
+                    taskHolder.push(`#${item.tags[t]}`);
+                };
+            };
+            taskTags.innerText = taskHolder.join(" ");
+            taskInfo.append(taskTags);
 
         // Calculate total comments 
-        const commentsArr = item.comments;
+        
+        // Count array elements/nested array elements
+        function countComments(arr) {
+            let count = 0;
+                for (const element of arr) {
+                    if (Array.isArray(element)) {
+                        count += countComments(element);
+                    } else {
+                        count++;
+                    }
+                }
+                return count;
+            };
 
-            // Working on conditional to check if only one comment was saved as array[0].length counts string length if only one value, counts total number of entires otherwise.
-            // Conditional to check if only one comment as it's stored as a string.
-            // let totalComments = 0;
-            //     if (typeof commentsArr[0] === 'string') {
-
-            //         totalComments = 1;
-
-            //     } else {
-
-            //         console.log(totalComments);
-                    
-            //         totalComments = commentsArr[0].length;
-            //     }
-
-                let totalComments = commentsArr[0].length;
+        let commentsArr = item.comments;
 
         const taskComments = document.createElement('div');
             taskComments.setAttribute('class', 'task-comments');
-            taskComments.innerText = `${totalComments}`;
+            taskComments.innerText = `${countComments(commentsArr)}`;
                 taskInfo.append(taskComments);
-        const commentImg = document.createElement('img');
-            commentImg.src = blackComment;
-            commentImg.setAttribute('class', 'task-icon');
+        const commentImg = document.createElement('div');
+            commentImg.setAttribute('class', 'task-icon comments-event');
                 taskComments.append(commentImg);
 
         
         const editDelete = document.createElement('div');
             editDelete.setAttribute('class', 'task-edit-del');
                 taskInfo.append(editDelete);
-        const editImg = document.createElement('img');
-            editImg.setAttribute('class', 'task-icon');
-            editImg.src = greyEdit;
-        const delImg = document.createElement('img');
+                
+        const editImg = document.createElement('div');
+            editImg.setAttribute('class', 'task-icon edit-event');
+            // Store task ID as dataset attr.
+            editImg.dataset.taskId = `${item.id}`;
+
+        const delImg = document.createElement('div');
             delImg.setAttribute('class', 'task-icon delete-event');
-            delImg.setAttribute('id', 'delete-icon');
-            delImg.src = greyDel;
+                // Store task ID as dataset attr.
+                delImg.dataset.taskId = `${item.id}`;
                 editDelete.append(editImg, delImg);
 
     });
@@ -125,35 +136,12 @@ function buildTask(project) {
     const taskImg = document.createElement('img');
         taskImg.src = blackCircle;
         taskImg.setAttribute('class', 'task-icon add-task-event');
-                mainTaskBtn.append(taskImg);
-
-    // Delete Modal Const's
-    // const deleteModal = document.querySelector('.delete-modal');
-    // const delButton = document.querySelector('.delete-btn');
-    // const saveButton = document.querySelector('.save-btn');
-
-    // 
-
-        // delButton.addEventListener('click', () => {
-        //     let taskId = firstProject.tasks[0].id
-        //     console.log(taskId);
-        //     firstProject.removeTask(taskId);
-        //         closeModal();
-        //         mainContent.innerHTML = '';
-        //             buildTask(firstProject);
-        // });
-
-        // saveButton.addEventListener('click', () => {
-        //     closeModal();
-        // });
-
-    // });
+            mainTaskBtn.append(taskImg);
+    
+        const endLine = document.createElement('div');
+        endLine.setAttribute('class', 'end-line');
+            mainContent.append(endLine);
 
 };
-
-function deleteTask(task) {
-
-}
-
-    
+ 
 export { buildTask };
