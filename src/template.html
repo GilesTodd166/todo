@@ -27,24 +27,30 @@
 
                 <div class="side-line"></div>
 
-                <div class="side-actions">
+                <div id="side-task">
+                    <div class="add-task"></div>
+                    <img class="task-icon add-project-event" src="./media/icons/add_circle_black.svg">
+                    <span class="add-project-event">Add Project</span>
+                </div>
+
+                <!-- <div class="side-actions">
                         <ul>
                             <li>Projects</li>
                             <li>Today</li>
                             <li>Calendar</li>
                             <li>Tags</li>
                         </ul>
-                </div>
+                </div> -->
 
                 <div class="side-line"></div>
 
                 <div class="side-projects">
                     <h3>Projects</h3>
-                    <ul>
+                    <!-- <ul>
                         <li>Project Name</li>
                         <li>Another Project</li>
                         <li>Project 666</li>
-                    </ul>
+                    </ul> -->
                 </div>
 
                 <div class="side-line"></div>
@@ -231,7 +237,7 @@
                         <p>Are you sure you want to delete this task:</p>
                     </div>
 
-                    <div id="taskName" class="modal-element">
+                    <div id="modalTitle" class="modal-element">
                         <h3>Task Name</h3>
                     </div>
 
@@ -320,6 +326,36 @@
 
                 <div class="modal-element">
                     <button class="modal-save-btn" type="submit">Save</button>
+                    <button class="delete-btn" type="button">Delete</button>
+                </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <div class="project-modal">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h1>Add Project</h1>
+                    <img id="closeIcon" class="settings-icon" src="media/icons/close_grey.svg" height="16px">
+                </div>
+                
+                    <div class="modal-line"></div>
+
+                <form id="project-form" onsubmit="return false;">
+
+                <div class="modal-element">
+                    <label class="label-text" for="task-name" autofocus>Project Name:</label>
+                        <input id="project-name" name="project-name" type="text" required>
+                </div>
+
+                    <!-- <div class="modal-line"></div> -->
+
+                <div class="modal-element">
+                    <button class="project-save-btn" type="submit">Save</button>
                     <button class="delete-btn" type="button">Delete</button>
                 </div>
 

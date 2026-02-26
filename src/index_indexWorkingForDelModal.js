@@ -2,18 +2,11 @@ import "./styles.css";
 import { parse, parseISO, format } from "date-fns";
 import blackCircle from "./media/icons/add_circle_black.svg";
 
-import { Project, addProject, allProjects, removeProject, getProjectById } from "./classes.js";
+import { Project, allProjects, addProject, removeProject, getProjectById } from "./classes.js";
 import { buildTaskElement } from "./tasks.js";
 import { buildProjectElement } from "./projects.js";
 
-
-// ------ STATE ------
 let currentProject = allProjects[0];
-let currentTask = null;
-let deleteContext = {
-    type: null,
-    id: null
-};
 window.currentProject = currentProject;
 
 
@@ -29,16 +22,6 @@ const delButton = document.querySelector('.delete-btn');
 const delModalTitle = document.querySelector('#modalTitle');
 const modalContent = document.querySelector('.modal-content');
 const parentHeader = document.getElementById('parent-header');
-const taskModal = document.querySelector('.task-modal');
-const submitButton = document.querySelector('.modal-save-btn');
-const commentsModal = document.getElementById('modal-comments');
-const sideBar = document.querySelector('.sidebar');
-const projectModal = document.querySelector('.project-modal');
-const projectSubmitButton = document.querySelector('.project-save-btn');
-// Form Consts
-const taskForm = document.getElementById('task-form');
-const projectForm = document.getElementById('project-form');
-const dateInput = document.getElementById('task-date');
 
 // ------ FUNCTIONS ------
 
@@ -96,266 +79,52 @@ function renderProjects() {
     // Clear sideProjects for re render.
     sideProjects.innerHTML = '';
 
-    // Might be able to remove index from this forEach when id is used to load delModal etc.
     allProjects.forEach((project, index) => {
         const projectElement = buildProjectElement(project, index);
             sideProjects.append(projectElement);
     });
 };
 
-function openDelModal(id, type) {
+function openDelModal(index, taskOrProject) {
     // This could be a wider function to cover all modals, see in future.
     deleteModal.style.display = 'block';
     document.body.classList.add('modal-open');
-    
-    if (type === 'project') {
-        let targetProject = getProjectById(allProjects, id);
-        delModalTitle.innerHTML = `<h3>${targetProject.title}</h3>`;
-            // delButton.dataset.id = id;
-            deleteContext.type = "project";
-            deleteContext.id = id;
+
+    if (taskOrProject === 'project') {
+        delButton.dataset.index = index;
+        delModalTitle.innerHTML = `<h3>${allProjects[index].title}</h3>`;
     } else {
-        delModalTitle.innerHTML = `<h3>${currentTask.title}</h3>`;
-            // delButton.dataset.id = currentProject.id;
-            deleteContext.type = "task";
-            deleteContext.id = id;
-    };
-};
-
-function deleteProjectOrTask(deleteContext) {
-    const targetId = deleteContext.id;
-
-    // Delete project functionality.
-    if (deleteContext.type === 'project') {
-        const getTargetProjectById = getProjectById(allProjects, targetId);
-
-            // Convert toString to match format of id in allProjects.
-            let targetToString = getTargetProjectById.id.toString();
-            removeProject(targetToString);
-
-                // Re render projects and tasks with new currentProject.
-                currentProject = allProjects[0];
-                    renderProjects();
-                    renderTask(currentProject);
-                        closeModal();
-    } else {
-        // Delete task functionality
-        currentProject.removeTask(targetId);
-            renderTask(currentProject);
-                closeModal();
+        // logic for when its a task not a project
     }
-}
+};
 
-function closeModal() {
+function closeDelModal() {
     deleteModal.style.display = 'none';
     document.body.classList.remove('modal-open');
 
-    taskModal.style.display = 'none';
-    deleteModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-
-    // resetForm after editing form is closed and add comments header back.
-    taskForm.reset();
-        commentsModal.innerHTML = '<label class="label-text" for="task-comments">Saved Comments:</label>';
-
+    // Commented as I havent gotten to form or comments yet, unsure if this applies to close modal
+    // Could be if statements to close all modals here.
+    // taskForm.reset();
+    //     commentsModal.innerHTML = '<label class="label-text" for="task-comments">Saved Comments:</label>';
 };
-
-function saveModal(taskId) {
-    if (taskId === undefined) {
-        closeModal();
-    } else {
-        // Saving task functionality here using taskId passed in.
-        closeModal();
-    };
-};
-
-function openTaskModal(taskId) {
-    taskModal.style.display = 'block';
-    document.body.classList.add('modal-open');
-
-    // Attach task-id to submit button on modal task form.
-    // Might not need this is using currentTask as reference but its here for now on submit button.
-    submitButton.setAttribute('task-id', `${taskId}`);
-};
-
-function openProjectModal() {
-    projectModal.style.display = 'block';
-    document.body.classList.add('modal-open');
-};
-function closeProjectModal() {
-    projectModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-};
-
-function submitProjectForm() {
-    
-    const projectSaveBtn = document.querySelector('.project-save-btn');
-
-    const projectFormData = new FormData(event.target);
-
-    const projectTitle = projectFormData.get('project-name');
-
-    // Instance of a new Project
-    let newProject = new Project(projectTitle);
-
-    addProject(newProject);
-
-        // sideProjects.innerHTML = '<h3>Projects</h3><ul>'
-
-    renderProjects();
-
-    currentProject = allProjects[0];
-
-    renderTask(currentProject);
-
-    closeProjectModal();
-}
-
-// Populate form with unique task data for editing.
-function populateForm(currentTask) {
-    document.getElementById('task-name').value = currentTask.title;
-    document.getElementById('task-desc').value = currentTask.description;
-    // Pull date string, convert it to formatted date with date-fns
-        const currentTaskDate = format(parse(currentTask.date, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
-    document.querySelector('input[type="date"]').value = currentTaskDate;
-    document.forms["task-form"].elements["task-priority"].value = currentTask.priority;
-    document.getElementById('task-tags').value = currentTask.tags;
-
-        populateComments(currentTask);
-};
-
-function populateComments(currentTask) {
-
-    commentsModal.innerHTML = '<label class="label-text" for="task-comments">Saved Comments:</label>';
-
-    // Pull forEach over .comments and create a 'comment' in the DOM.
-    let commentsArr = currentTask.comments;
-    // Flatten comments array to single array.
-    let allStrings = Array.isArray(commentsArr)
-        ? commentsArr.flat(Infinity).filter(comment => typeof comment === 'string') : [];
-
-    allStrings.forEach((comment, index) => {
-        let commentsContainer = document.createElement('div');
-            commentsContainer.className = 'comments-container';
-                commentsContainer.setAttribute('data-index', index);
-                    commentsModal.appendChild(commentsContainer);
-        let commentDiv = document.createElement('div');
-            commentDiv.className = 'saved-comment';
-            commentDiv.textContent = comment;
-                commentDiv.setAttribute('data-index', index);
-                    commentsContainer.appendChild(commentDiv);
-        let closeIcon = document.createElement('div');
-            closeIcon.className = 'close-icon';
-            closeIcon.setAttribute('id', 'close-icon');
-                closeIcon.setAttribute('data-index', index);
-                closeIcon.setAttribute('data-id', currentTask.id);
-                    commentsContainer.appendChild(closeIcon);
-        let modalLine = document.createElement('div');
-            modalLine.className = 'comments-line';
-                commentsModal.appendChild(modalLine);
-    });
-};
-
-// Form Functions
-function checkValidity(dateObj) {
-    
-        const today = new Date();
-        // Sets clock to 00:00, aligns date to midnight to ensure its correct, otherwise
-        // choosing todays date would count as in the past.
-        today.setHours(0,0,0,0);
-
-        // Reapplies the custom validity check.
-        dateInput.setCustomValidity('');
-
-        if (dateObj < today) {
-            dateInput.setCustomValidity('This date is in the past.');
-        };
-
-        if (!taskForm.checkValidity()) {
-            taskForm.reportValidity();
-            console.log('failed validity');
-            return false;
-        };
-        return true;
-};
-
-function addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId) {
-    console.log(taskComments);
-    // Add new task or update existing task using task ID.
-    if (taskId == 'undefined') {
-        currentProject.addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments);
-    } else {
-        currentProject.addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId);
-    };
-};
-function submitForm() {
-    // // Get task-id from attribute added when form loaded.
-    const modalSaveBtn = document.querySelector('.modal-save-btn');
-    let taskId = modalSaveBtn.getAttribute('task-id');
-
-    let existingComments = document.querySelectorAll('.saved-comment');
-    // Convert nodelist of comments to array of textContent, removing whitespaces either end.
-    let existingCommentsArray = Array.from(existingComments, item => item.textContent.trim());
-            
-    const formData = new FormData(event.target);
-        const taskName = formData.get('task-name');
-        const taskDesc = formData.get('task-desc');
-        const formDate = formData.get('task-date');
-        const taskPriority = formData.get('task-priority');
-        const taskTags = formData.get('task-tags');
-        // Pull new comments
-        const newComments = formData.get('task-comments');
-        // Push new comments to existing comments
-        if (newComments === '') {
-        } else {
-            existingCommentsArray.push(newComments);
-        } 
-        // Update taskComments to use as arg for addOrEditTask
-        const taskComments = existingCommentsArray;
-
-            const dateObj = parseISO(formDate);
-
-                // checkValidity() returns a true or false depending on validity check
-                // if it returns false, this return statement stops the submit event.
-                if (!checkValidity(dateObj)) return;
-
-            let taskDate = format((dateObj), 'dd-MM-yyyy');
-
-    // Add or Edit task based formData and taskId
-    addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId);
-
-    // Close modal window
-    closeModal();
-
-    // Re render task from project
-        renderTask(currentProject);
-};
-
 
 // ------ EVENTS ------
 
 // Event Delegation for sideProjects.
 sideProjects.addEventListener('click', (event) => {
     const target = event.target;
-
         if (!target.dataset.index) return;
 
-        const projectId = target.dataset.id;
-
-        const getProject = getProjectById(allProjects, projectId);
+        const index = Number(target.dataset.index);
 
         // Target the project name div
         if (target.classList.contains("project-name")) {
-            renderTask(getProject);
+            renderTask(allProjects[index]);
         };
         // Target the close icon
         if (target.classList.contains("close-icon")) {
-            const type = 'project';
-                openDelModal(projectId, type);
-        };
-        // Add Project event
-        if (target.classList.contains("add-project-event")) {
-            openProjectModal();
+            const projectDetector = 'project';
+                openDelModal(index, projectDetector);
         };
 });
 
@@ -364,90 +133,23 @@ modalContent.addEventListener('click', (event) => {
     const target = event.target;
     // Close icon function
     if (target.classList.contains("settings-icon")) {
-        closeModal();
+        closeDelModal();
     };
-    // Delete button functionality
+    // Delete button function
     if (target.classList.contains("delete-btn")) {
-        // Pass deleteContext from delModal to delete function.
-        deleteProjectOrTask(deleteContext);
+        const targetProjectIndex = target.dataset.index;
+        console.log(targetProjectIndex);
+            removeProject(targetProjectIndex);
+                // Re render projects and tasks with new currentProject.
+                currentProject = allProjects[0];
+                    renderProjects();
+                    renderTask(currentProject);
+                        closeDelModal();
+
+                        // STOP -- As per chatGPT, using the id to find the project, using my
+                        // getProjectId helper is more effective. It will help later if projects
+                        // are reordered. Consider this for tasks as tasks will likely be reordered.
     };
-    // Save button functionality
-    if (target.classList.contains("save-btn")) {
-        saveModal();
-    };
-});
-
-//Event Delegation for mainContent
-mainContent.addEventListener('click', (event) => {
-    const target = event.target;
-    let taskId = event.target.dataset.taskId;
-
-    // Set currentTask state
-    currentTask = currentProject.getTask(taskId);
-
-        // Add Task button event
-        if (target.classList.contains("add-task-event")) {
-            openTaskModal();
-        };
-        // Edit Task event
-        if (target.classList.contains("edit-event")) {
-
-                openTaskModal(currentTask.id);
-
-                populateForm(currentTask);
-        };
-        // Delete task event
-        if (event.target.classList.contains("delete-event")) {
-            const type = 'task';
-            openDelModal(taskId, type);
-        }
-});
-
-// Event Delegation for taskModal
-taskModal.addEventListener('click', (event) => {
-    const target = event.target;
-
-    // Delete comments event
-    if (target.classList.contains("close-icon")) {
-        const commentIndex = event.target.dataset.index;
-
-        currentProject.removeComment(currentTask, commentIndex);
-
-        populateForm(currentTask);
-    };
-    // Close task modal window event
-    if (target.classList.contains("settings-icon")) {
-        closeModal();
-    };
-});
-
-// Form Events
-dateInput.addEventListener('input', () => {
-    // Event Delegation for date input/validity
-    // Reset validity when date input is chosen - this removes the validity check entirely.
-    dateInput.setCustomValidity('');
-});
-taskForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    submitForm();
-});
-
-sideBar.addEventListener('click', (event) => {
-    const target = event.target;
-
-    // Add Task event
-    if (target.classList.contains("add-task-event")) {
-        openTaskModal();
-    };
-    // Add Project event 
-    if (target.classList.contains("add-project-event")) {
-        openProjectModal();
-    };
-});
-
-projectForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitProjectForm();
 });
 
 // ------ INITIALIZATION ------
@@ -534,6 +236,21 @@ renderTask(currentProject);
 //                 projectDiv.appendChild(closeProject);
 //     });
 // };
+
+
+// // STOP -- I broke it. Here are chatGPT's bullet points, first two are most important
+// // buildTask is being called when its required DOM or project doesn’t exist
+// // On initial load and after deletions, buildTask assumes a task container and a 
+// // selected project are present, but they aren’t yet — so querySelector(...) returns null and 
+// // .innerHTML crashes.
+
+// // currentProject is read too early and can be undefined
+// // You set currentProject = allProjects[0] at module load time, before projects are guaranteed to exist,
+// //  then pass undefined into buildTask, so nothing can render.
+
+// // Event listeners are being re-attached every time buildProjects() runs
+// // Sidebar click handlers live inside buildProjects, so rebuilding the sidebar stacks multiple listeners,
+// //  causing duplicate renders, unexpected clears, and “tasks not building” behaviour.
 
 
 // // Form Consts

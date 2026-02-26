@@ -108,6 +108,7 @@ main {
 
 .sidebar li {
     padding-bottom: 5px;
+    list-style-type: none;
 }
 
 .side-header {
@@ -140,6 +141,11 @@ h2 {
 
 h3 {
     font-weight: bold;
+}
+
+.project-div {
+        display: flex;
+    justify-content: space-between;
 }
 
 /* <-------- MAIN -------> */
@@ -234,7 +240,7 @@ span:hover {
 
 .comments-event {
     background-image: url("./media/icons/comment_black.svg");
-        outline: none;
+    outline: none;
 }
 .comments-event:hover {
     background-image: url("./media/icons/comment_blue.svg");
@@ -314,7 +320,7 @@ span:hover {
 } */
 
 /* ------ MODALS ------ */
-.task-modal {
+.task-modal, .project-modal {
     display: none;
     position: fixed;
     z-index: 1000; /* make sure it’s on top */
@@ -391,11 +397,15 @@ textarea {
     resize: none;
 }
 
+/* Modal Comments */
+.comments-container {
+    display: flex;
+    justify-content: space-between;
+}
 .saved-comment {
     padding: 0 0 10px 0;
     font-size: 14px;
 }
-
 .modal-line, .comments-line {
     border-top: 2px solid rgb(111, 120, 251);
     width: 100%;
@@ -404,9 +414,29 @@ textarea {
 .comments-line {
     border-top: 2px solid #d2d2d2;
 }
+.close-icon {
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 0.4em;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    transition: background-image 0.15s ease;
+
+    background-image: url('./media/icons/close_grey.svg');
+}
+.close-icon:hover {
+    background-image: url("./media/icons/close_red.svg");
+    outline: none;
+}
+
+#project-name {
+    margin-bottom: 20px;
+}
 
 /* ------ BUTTONS ------- */
-.save-btn, .modal-save-btn {
+.save-btn, .modal-save-btn, .project-save-btn {
   appearance: none;
   background-color: #2ea44f;
   border: 1px solid rgba(27, 31, 35, .15);
