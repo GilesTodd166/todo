@@ -33,6 +33,14 @@
                     <span class="add-project-event">Add Project</span>
                 </div>
 
+                <div class="side-line"></div>
+
+                <div id="side-task">
+                    <div class="add-tag"></div>
+                    <img class="task-icon add-tag-event" src="./media/icons/add_circle_black.svg">
+                    <span class="add-tag-event">Add Tag</span>
+                </div>
+
                 <!-- <div class="side-actions">
                         <ul>
                             <li>Projects</li>
@@ -56,13 +64,14 @@
                 <div class="side-line"></div>
 
                 <div class="side-tags">
-                    <h3>Tags</h3>
-                    <ul>
-                        <li>#stuff</li>
-                        <li>#to do</li>
-                        <li>#work</li>
-                        <li>#sports</li>
-                    </ul>
+                    <h3 class="tags-header">Tags</h3>
+
+                <!-- <div id="side-task">
+                    <div class="add-tag"></div>
+                    <img class="task-icon add-tag-event" src="./media/icons/add_circle_black.svg">
+                    <span class="add-tag-event">Add Tag</span>
+                </div> -->
+
                 </div>
 
                 <div class="side-line"></div>
@@ -227,14 +236,14 @@
                 <div class="modal-content">
 
                     <div class="modal-header">
-                    <h1>Delete Task</h1>
+                        <h1 class="modal-header-h1">Delete Task</h1>
                     <img id="closeIcon" class="settings-icon" src="media/icons/close_grey.svg" height="16px">
                 </div>
 
                 <div class="modal-line"></div>
 
-                    <div class="modal-element">
-                        <p>Are you sure you want to delete this task:</p>
+                    <div class="modal-text">
+                        <p>Are you sure you want to delete this Task:</p>
                     </div>
 
                     <div id="modalTitle" class="modal-element">
@@ -251,6 +260,32 @@
                 </div>
         </div>
 
+        <div class="delete-tag-modal">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                    <h1>Delete Tag</h1>
+                    <img id="closeIcon" class="settings-icon" src="media/icons/close_grey.svg" height="16px">
+                </div>
+
+                <div class="modal-line"></div>
+
+                    <div class="modal-element">
+                        <p>Are you sure you want to delete this tag:</p>
+                    </div>
+
+                    <div id="modalTitle" class="modal-element">
+                        <h3>Tag Name</h3>
+                    </div>
+
+                    <div class="modal-element">
+                        <button class="save-btn" type="submit">Save</button>
+                        <button class="delete-btn" role="button">Delete</button>
+                    </div>
+
+                </div>
+        </div>
 
         <div class="task-modal">
 
@@ -300,8 +335,17 @@
                 </div>
 
                 <div class="modal-element">
-                    <label class="label-text" for="task-tags">Tags:</label> <!--look up how to auto-fill existing tags-->
-                        <input id="task-tags" name="task-tags" type="text">
+                    <label class="label-text" for="task-tags">Tags:</label>
+                        <!-- <input id="task-tags" name="task-tags" type="text"> -->
+                         <select id="task-tags" name="task-tags">
+                                <option disabled selected value> -- select an option -- </option>
+                         </select>
+                </div>
+
+                <div class="modal-element">
+                    <div id="modal-tags">
+                        <label class="label-text" for="task-tags">Saved Tags:</label>
+                    </div>
                 </div>
 
                 <div class="modal-element">
@@ -326,7 +370,7 @@
 
                 <div class="modal-element">
                     <button class="modal-save-btn" type="submit">Save</button>
-                    <button class="delete-btn" type="button">Delete</button>
+                    <button class="delete-btn task-delete" type="button">Delete</button>
                 </div>
 
                 </form>
@@ -356,6 +400,36 @@
 
                 <div class="modal-element">
                     <button class="project-save-btn" type="submit">Save</button>
+                    <button class="delete-btn" type="button">Delete</button>
+                </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <div class="tag-modal">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h1>Add Tag</h1>
+                    <img id="closeIcon" class="settings-icon" src="media/icons/close_grey.svg" height="16px">
+                </div>
+                
+                    <div class="modal-line"></div>
+
+                <form id="tag-form" onsubmit="return false;">
+
+                <div class="modal-element">
+                    <label class="label-text" for="tag-name" autofocus>Tag Name:</label>
+                        <input id="tag-name" name="tag-name" type="text" required>
+                </div>
+
+                    <!-- <div class="modal-line"></div> -->
+
+                <div class="modal-element">
+                    <button class="tag-save-btn" type="submit">Save</button>
                     <button class="delete-btn" type="button">Delete</button>
                 </div>
 

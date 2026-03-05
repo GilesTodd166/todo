@@ -1,4 +1,22 @@
-import { add } from "date-fns";
+class Tags {
+    constructor() {
+        this.tagsArr = [];
+    };
+    addTag(tag) {
+        const newTag = {
+            id: crypto.randomUUID(),
+            name: tag
+        };
+        this.tagsArr.push(newTag);
+        return newTag;
+    };
+    removeTag(id) {
+        this.tagsArr = this.tagsArr.filter(tag => tag.id !== id);
+    };
+    getTagById(id) {
+        return this.tagsArr.find(tag => tag.id === id);
+    };
+};
 
 class Task {
     constructor(title, description, date, priority, tags, comments) {
@@ -10,52 +28,34 @@ class Task {
         this.comments = comments || [];
         this.id = crypto.randomUUID();
     };
-}
+
+    removeTag(currentTask, tagIndex) {
+        let currentTaskTag = currentTask.tags;
+            currentTaskTag.splice(tagIndex, 1);
+    };
+
+};
 
 class Project {
     constructor(title) {
         this.id = crypto.randomUUID();
         this.title = title;
         this.tasks = [];
-    }
+    };
 
         addOrEditTask(title, description, date, priority, tags, comments, id) {
         if (!id) {
+            console.log('add task fired', id);
             let newTask = new Task(title, description, date, priority, tags, comments, id);
-                    
-            // Commenting out as comments should already be an array, implement this
-            // in index.js before passing in
-            // const commentsArr = [];
-
-            //     // If comments is empty, push empty array, not empty string to commentsArr.
-            //     if (comments === '') {
-            //         comments = [];
-            //     } else {
-            //         commentsArr.push(comments);
-            //     }
-
-            //     // commentsArr.push(comments);
-            //     newTask.comments = commentsArr;
 
                 this.tasks.push(newTask);
                     return;
+
         } else {
             // Pull tasks array, find array with id, update data.
             const targetId = id;
             const foundTask = this.tasks.find(item => item.id === targetId);
             console.log('edit task fired');
-
-            // Commenting this out as comments should already be an array when passed
-            // into editTask, apply this in index.js
-            // const commentsArr = [];
-
-            // // If comments is empty, push empty array, not empty string to commentsArr.
-            // // Push existing comments and new comments to commentsArr.
-            // if (comments === '') {
-            //     comments = [];
-            // } else {
-            //     commentsArr.push(comments);
-            // };
 
             if (foundTask) {
                 foundTask.title = title;
@@ -72,44 +72,24 @@ class Project {
         };
     };
 
-    // removeComment(targetTaskId, targetTaskComments, commentIndex) {
-    //     console.log(targetTaskId, targetTaskComments, commentIndex);
-    //     const foundTask = this.tasks.find(item => item.id === targetTaskId);
-
-    //     let foundTaskComments = foundTask.comments
-
-    //     foundTaskComments.splice(commentIndex, 1);
-
-    //     console.log(foundTaskComments);
-
-    //     return foundTaskComments;
-    // }
-
     removeComment(currentTask, commentIndex) {
         let currentTaskComments = currentTask.comments
             currentTaskComments.splice(commentIndex, 1);
-
-            // console.log(this.tasks);
-
-        // const targetTask = this.tasks.find(task => task.id === taskId);
-
-        // let targetTaskComments = targetTask.comments
-        // targetTaskComments.splice(commentIndex, 1);
-    }
+    };
 
     removeTask(id) {
         this.tasks = this.tasks.filter(task => task.id != id);
-    }
+    };
 
     getTask(id) {
         return this.tasks.find(task => task.id === id);
-    }
-}
+    };
+};
 
+// Projects Array.
 const allProjects = [];
 
 function addProject(project) {
-    console.log(project);
     allProjects.push(project);
 };
 
@@ -126,6 +106,41 @@ function getProjectById(projects, id) {
     return projects.find(project => project.id === id) || null;
 };
 
+// Match any tasks across all projects with the tag name arg.
+// Send data back to build/render the screen with tags.
+function getTasksWithTag(tag) {
+    // console.log(allProjects);
+    // console.log(tag);
+
+    allProjects.forEach((projects) => {
+        let projectTasks = projects.tasks
+
+        projectTasks.forEach((tasks) => {
+            // console.log(tasks.tags)
+
+            // STOP -- Here we have all the tags in each task rendered.
+            //         First I think I need to build the front end functionality
+            //         of adding/removing tags to each task, then come back
+            //         to build the comparison logic.
+
+        });
+    });
+}
+
+// Instance of Tags Array
+const allTags = new Tags();
+
+allTags.addTag("TagOne");
+allTags.addTag("TagTwo");
+// function addTag(tag) {
+//     allTags.push(tag);
+// };
+
+// function removeTag(tag) {
+//     // Unsure this will function correctly, hopefully don't need ID's
+//     allTags.splice(tag, 1);
+// }
+
 // Instance of a new Project
 let firstProject = new Project("My First Project");
 let secondProject = new Project("My Second Project");
@@ -136,11 +151,11 @@ addProject(secondProject);
 window.firstProject = firstProject;
 window.secondProject = secondProject;
 
-firstProject.addOrEditTask("Task One", "Description of the task saved", "03-05-2026", "High", "SingleTag", ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-firstProject.addOrEditTask("Task Two", "Description of the task saved", "03-05-2026", "Medium", "SingleTag", ["A second comment", "Two comments"]);
-firstProject.addOrEditTask("Task Three", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TwoTags",], "A single saved comment");
+firstProject.addOrEditTask("Task One", "Description of the task saved", "03-05-2026", "Low", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
+firstProject.addOrEditTask("Task Two", "Description of the task saved", "03-05-2026", "High", [], ["A second comment", "Two comments"]);
+firstProject.addOrEditTask("Task Three", "Description of the task saved", "03-05-2026", "Medium", ["TagOne", "TagTwo",], ["A single saved comment"]);
 
-secondProject.addOrEditTask("2nd Project Task One", "Description of the task saved", "03-05-2026", "High", "SingleTag", ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-secondProject.addOrEditTask("2nd Project Task Two", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TwoTags",], "A single saved comment");
+secondProject.addOrEditTask("2nd Project Task One", "Description of the task saved", "03-05-2026", "High", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
+secondProject.addOrEditTask("2nd Project Task Two", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TagTwo",], ["A single saved comment"]);
 
-export { Project, allProjects, addProject, removeProject, getProjectById };
+export { Project, allProjects, addProject, removeProject, getProjectById, getTasksWithTag, allTags};
