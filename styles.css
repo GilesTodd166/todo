@@ -1,0 +1,559 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Meyer CSS Reset Above */
+
+/* Fonts */
+@font-face {
+    font-family: "CreatoDisplayRegular";
+    src: url(./6d28723c4e0b525a515f.otf) format("opentype");
+    font-display: swap; /* use fallback until font loads */
+}
+
+body {
+    height: 100%;
+}
+
+main {
+    display: grid;
+    min-height: 100vh;
+    grid-template-columns: 280px 1fr;
+
+    /* background-color: antiquewhite; */
+    background-color: white;
+
+    font-family: "CreatoDisplayRegular";
+}
+
+/* <-------- SIDEBAR -------> */
+.sidebar {
+  display: flex;
+  flex-direction: column;   /* vertical layout */
+  width: 280px;
+  height: 100vh;
+  background: #f2f2f2;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+
+    /* background-color: bisque; */
+    background-color: #f2f2f2;
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.sidebar > div:not(:last-child) {
+  flex: 0 1 auto;
+}
+
+.sidebar > div:last-child {
+  margin-top: auto;
+}
+
+.side-line {
+    border-top: 2px solid rgb(111, 120, 251);
+    width: 100%;
+}
+
+.sidebar ul {
+    padding: 10px;
+}
+
+.sidebar li {
+    padding-bottom: 5px;
+    list-style-type: none;
+}
+
+.side-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+.user-icon {
+    height: 36px;
+}
+.settings-icon {
+    height: 24px;
+    margin-left: auto;
+}
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#side-task {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+#side-task span {
+    position: relative;
+    top: 1px;
+    font-weight: bold;
+}
+
+.projects-header, .tags-header {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.project-div, .tag-div {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10px;
+}
+
+/* <-------- MAIN -------> */
+
+/* ------ HEADER ------ */
+.project-header {
+    font-size: 18px;
+}
+    .bold {
+        font-weight: bold;
+    }
+    .hidden-element {
+        display: none;
+    }
+
+.main {
+    display: grid;
+    grid-template-rows: 30px 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.main-line, .end-line {
+    border-top: 2px solid rgb(111, 120, 251);
+    width: 100%;
+    margin: 1em 0;
+}
+.end-line {
+    border-top: 2px solid #d2d2d2;
+    padding-bottom: 20px;
+}
+
+
+.section-line {
+    border-top: 2px solid rgb(166, 172, 255);
+    width: 100%;
+    margin: 1em 0;
+}
+
+.main-content {
+    background-color: white;
+    width: 100vh;
+    justify-self: center;
+
+    padding: 40px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+.add-task {
+    padding: 10px 0 20px 0;
+}
+span {
+    position: relative;
+    top: 2px;
+    font-weight: bold;
+    transition: color 0.15s ease;
+}
+span:hover {
+    color: #2854C5;
+}
+
+.task-icon {
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 0.4em;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    transition: background-image 0.15s ease;
+}
+
+.edit-event {
+    background-image: url(./5b39b0c4ebe3cb2ee6ce.svg);
+}
+.edit-event:hover {
+    background-image: url(./ec276661946bf4b126ec.svg);
+}
+
+.delete-event {
+    background-image: url(./b10e4864d682a4eca2d2.svg);
+}
+.delete-event:hover {
+    background-image: url(./73ba59b308bda3eb3fe6.svg);
+}
+
+.comments-event {
+    background-image: url(./4d459be30f4156794fec.svg);
+    outline: none;
+}
+.comments-event:hover {
+    background-image: url(./b639c43948bb797e82ca.svg);
+    outline: none;
+}
+
+.section {
+    font-weight: bold;
+    padding: 10px 0 10px 0;
+}
+
+.task {
+    display: grid;
+    width: 96%;
+    gap: 15px;
+
+    margin: 10px 0 10px 0;
+    padding: 20px;
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border-radius: 5px;
+}
+
+.task-title {
+    font-weight: bold;
+}
+
+.task-desc {
+    font-weight: 400;
+}
+
+.task-info {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: 30px;
+    /* grid-template-rows: repeat(4, 1fr); */
+
+    color: rgb(55, 55, 55);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.task-info > div {
+    display: flex;
+    align-items: center;
+}
+
+.task-date {
+    font-weight: 600;
+}
+
+/* Priority Styles */
+#task-priority {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+    .High {
+        color: red;
+    }
+    .Medium {
+        color: rgb(255, 128, 0);
+    }
+    .Low {
+        color:  #298e46;
+    }
+
+
+.task-comments, .task-tags {
+    font-weight: 600;
+    gap: 0.4em;
+}
+
+/* .task-edit-del {
+    gap: 0.8em;
+} */
+
+/* ------ MODALS ------ */
+.task-modal, .project-modal, .tag-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000; /* make sure it’s on top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4); /* dark transparent overlay */
+} 
+
+.delete-modal, .delete-tag-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000; /* make sure it’s on top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4); /* dark transparent overlay */
+} 
+h3 {
+    font-weight: bold;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    width: 500px;
+    max-width: 100%;
+    padding: 30px;
+
+    left: 40%;
+    top: 10%;
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border-radius: 5px;
+
+    font-family: "CreatoDisplayRegular";
+
+    display: grid;
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: top;
+}
+
+.label-text {
+    font-weight: bold;
+    font-size: 14px;
+    color:  rgb(55, 55, 55);
+    padding: 6px 0 4px 0;
+}
+
+.modal-content label {
+  display: block;
+}
+
+.modal-content input {
+    width: 100%;
+    font-size: 16px;
+}
+
+textarea {
+    width: 100%;
+    height: 80%;
+    resize: none;
+}
+
+/* Modal Comments */
+.comments-container, .tags-container {
+    display: flex;
+    justify-content: space-between;
+}
+.saved-comment, .saved-tag {
+    padding: 0 0 10px 0;
+    font-size: 14px;
+}
+.modal-line, .comments-line {
+    border-top: 2px solid rgb(111, 120, 251);
+    width: 100%;
+    padding: 0 0 10px 0;
+}
+.comments-line {
+    border-top: 2px solid #d2d2d2;
+}
+.close-icon, .close-tag {
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 0.4em;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    transition: background-image 0.15s ease;
+
+    background-image: url(./277eba015eb32b404579.svg);
+}
+.close-icon:hover {
+    background-image: url(./02bb80939e1f11a89f74.svg);
+    outline: none;
+}
+
+#project-name, #tag-name {
+    margin-bottom: 20px;
+}
+
+/* .side-tags {
+    padding-bottom: -10px;
+} */
+/* .side-tags h3 {
+    margin-bottom: 15px;
+}
+.side-tags ul {
+    padding:  0 0 0 10px;
+} */
+.side-tags li {
+    font-weight: normal;
+    padding-bottom: 5px;
+
+}
+
+/* ------ BUTTONS ------- */
+.save-btn, .modal-save-btn, .project-save-btn, .tag-save-btn {
+  appearance: none;
+  background-color: #2ea44f;
+  border: 1px solid rgba(27, 31, 35, .15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "CreatoDisplayRegular";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.save-btn:focus:not(:focus-visible):not(.focus-visible) {
+  box-shadow: none;
+  outline: none;
+}
+.save-btn:hover {
+  background-color: #2c974b;
+}
+
+.save-btn:focus {
+  box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+  outline: none;
+}
+
+.save-btn:disabled {
+  background-color: #94d3a2;
+  border-color: rgba(27, 31, 35, .1);
+  color: rgba(255, 255, 255, .8);
+  cursor: default;
+}
+
+.save-btn:active {
+  background-color: #298e46;
+  box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+}
+
+/* CSS */
+.delete-btn {
+  appearance: none;
+  background-color: #a42e2e;
+  border: 1px solid rgba(27, 31, 35, .15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "CreatoDisplayRegular";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.delete-btn:focus:not(:focus-visible):not(.focus-visible) {
+  box-shadow: none;
+  outline: none;
+}
+.delete-btn:hover {
+  background-color: #972c2c;
+}
+
+.delete-btn:focus {
+  box-shadow: rgba(164, 46, 46, 0.4) 0 0 0 3px;
+  outline: none;
+}
+
+.delete-btn:disabled {
+  background-color: #d39494;
+  border-color: rgba(27, 31, 35, .1);
+  color: rgba(255, 255, 255, .8);
+  cursor: default;
+}
+
+.delete-btn:active {
+  background-color: #8e2929;
+  box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+}
