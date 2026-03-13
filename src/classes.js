@@ -8,10 +8,16 @@ class Tags {
             name: tag
         };
         this.tagsArr.push(newTag);
-        return newTag;
+            // Update localStorage
+            setProject();
+            setTag();
+                return newTag;
     };
     removeTag(id) {
         this.tagsArr = this.tagsArr.filter(tag => tag.id !== id);
+            // Update localStorage
+            setProject();
+            setTag();
     };
     getTagById(id) {
         return this.tagsArr.find(tag => tag.id === id);
@@ -33,7 +39,6 @@ class Task {
         let currentTaskTag = currentTask.tags;
             currentTaskTag.splice(tagIndex, 1);
     };
-
 };
 
 class Project {
@@ -45,17 +50,17 @@ class Project {
 
         addOrEditTask(title, description, date, priority, tags, comments, id) {
         if (!id) {
-            console.log('add task fired', id);
             let newTask = new Task(title, description, date, priority, tags, comments, id);
 
                 this.tasks.push(newTask);
-                    return;
+                    // Update localStorage                
+                    setProject();
+                        return;
 
         } else {
             // Pull tasks array, find array with id, update data.
             const targetId = id;
             const foundTask = this.tasks.find(item => item.id === targetId);
-            console.log('edit task fired');
 
             if (foundTask) {
                 foundTask.title = title;
@@ -64,21 +69,25 @@ class Project {
                 foundTask.priority = priority;
                 foundTask.tags = tags;
                 foundTask.comments = comments;
-                // Editing this out as comments should already be an array
-                // foundTask.comments = commentsArr;
             } else {
                 console.log('Task not found');
             };
         };
+        // Update localStorage      
+        setProject();
     };
 
     removeComment(currentTask, commentIndex) {
         let currentTaskComments = currentTask.comments
             currentTaskComments.splice(commentIndex, 1);
+                // Update localStorage      
+                setProject();
     };
 
     removeTask(id) {
         this.tasks = this.tasks.filter(task => task.id != id);
+            // Update localStorage      
+            setProject();
     };
 
     getTask(id) {
@@ -87,10 +96,12 @@ class Project {
 };
 
 // Projects Array.
-const allProjects = [];
+let allProjects = getProject();
 
-function addProject(project) {
+function addProject(projectTitle) {
+    const project = new Project(projectTitle);
     allProjects.push(project);
+        setProject();
 };
 
 function removeProject(projectId) {
@@ -99,6 +110,8 @@ function removeProject(projectId) {
     if (projectToRemove !== -1) {
         allProjects.splice(projectToRemove, 1);
     };
+    // Update localStorage
+    setProject();
 };
 
 function getProjectById(projects, id) {
@@ -107,55 +120,102 @@ function getProjectById(projects, id) {
 };
 
 // Match any tasks across all projects with the tag name arg.
-// Send data back to build/render the screen with tags.
 function getTasksWithTag(tag) {
-    // console.log(allProjects);
-    // console.log(tag);
 
-    allProjects.forEach((projects) => {
-        let projectTasks = projects.tasks
+    // flatMap returns every task in every project in one array.
+    // filter and includes checks each task for matching tags to tag argument.
+    const foundTasks = allProjects.flatMap(project => project.tasks.filter(task => task.tags.includes(tag)));
 
-        projectTasks.forEach((tasks) => {
-            // console.log(tasks.tags)
+    return foundTasks;
+};
 
-            // STOP -- Here we have all the tags in each task rendered.
-            //         First I think I need to build the front end functionality
-            //         of adding/removing tags to each task, then come back
-            //         to build the comparison logic.
+// ----- Storage -----
 
-        });
+function setProject() {
+    localStorage.setItem("projects", JSON.stringify(allProjects));
+};
+
+function getProject() {
+    const stored = localStorage.getItem("projects");
+    const storedTags = localStorage.getItem("tags");
+  
+    if (!stored) return [];
+
+    const rawProjects = JSON.parse(stored);
+
+    // reconstruct Project and Task instances
+    const projects = rawProjects.map(p => {
+        const project = new Project(p.title);
+        project.id = p.id; // preserve original id
+
+        // reconstruct tasks
+        project.tasks = p.tasks.map(t => {
+            const task = new Task(t.title, t.description);
+            task.id = t.id;
+            task.date = t.date;
+            task.priority = t.priority;
+            task.tags = t.tags || [];
+            task.comments = t.comments || [];
+                return task;
+            });
+
+            return project;
     });
-}
+    return projects;
+};
 
 // Instance of Tags Array
-const allTags = new Tags();
+let allTags = getTags();
 
-allTags.addTag("TagOne");
-allTags.addTag("TagTwo");
-// function addTag(tag) {
-//     allTags.push(tag);
-// };
+function setTag() {
+    localStorage.setItem("tags", JSON.stringify(allTags.tagsArr));
+};
 
-// function removeTag(tag) {
-//     // Unsure this will function correctly, hopefully don't need ID's
-//     allTags.splice(tag, 1);
-// }
+function getTags() {
+    const stored = localStorage.getItem("tags");
+
+    if (!stored) return;
+
+    const rawTags = JSON.parse(stored);
+
+    // Reconstruct Tag instance
+    const tagsInstance = new Tags();
+        // Reconstruct each tag and push to tagsInstance
+        rawTags.forEach((tag) => {
+            tagsInstance.tagsArr.push(tag);
+        });
+
+    return tagsInstance;
+};
+
+// allTags.addTag("TagOne");
+// allTags.addTag("TagTwo");
 
 // Instance of a new Project
-let firstProject = new Project("My First Project");
-let secondProject = new Project("My Second Project");
-addProject(firstProject);
-addProject(secondProject);
+// let firstProject = new Project("My First Project");
+// let secondProject = new Project("My Second Project");
+// addProject(firstProject);
+// addProject(secondProject);
 
 // Makes firstProject globally scoped.
-window.firstProject = firstProject;
-window.secondProject = secondProject;
+// window.firstProject = firstProject;
+// window.secondProject = secondProject;
 
-firstProject.addOrEditTask("Task One", "Description of the task saved", "03-05-2026", "Low", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-firstProject.addOrEditTask("Task Two", "Description of the task saved", "03-05-2026", "High", [], ["A second comment", "Two comments"]);
-firstProject.addOrEditTask("Task Three", "Description of the task saved", "03-05-2026", "Medium", ["TagOne", "TagTwo",], ["A single saved comment"]);
+// firstProject.addOrEditTask("Task One", "Description of the task saved", "03-05-2026", "Low", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
+// firstProject.addOrEditTask("Task Two", "Description of the task saved", "03-05-2026", "High", [], ["A second comment", "Two comments"]);
+// firstProject.addOrEditTask("Task Three", "Description of the task saved", "03-05-2026", "Medium", ["TagOne", "TagTwo",], ["A single saved comment"]);
 
-secondProject.addOrEditTask("2nd Project Task One", "Description of the task saved", "03-05-2026", "High", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-secondProject.addOrEditTask("2nd Project Task Two", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TagTwo",], ["A single saved comment"]);
+// secondProject.addOrEditTask("2nd Project Task One", "Description of the task saved", "03-05-2026", "High", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
+// secondProject.addOrEditTask("2nd Project Task Two", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TagTwo",], ["A single saved comment"]);
 
-export { Project, allProjects, addProject, removeProject, getProjectById, getTasksWithTag, allTags};
+// storeProject(firstProject);
+// storeProject(secondProject);
+
+export { allProjects, 
+         addProject, 
+         removeProject, 
+         getProjectById,
+         getProject, 
+         allTags, 
+         getTasksWithTag 
+        };
