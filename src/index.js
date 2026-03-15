@@ -2,7 +2,13 @@ import "./styles.css";
 import { parse, parseISO, format } from "date-fns";
 import blackCircle from "./media/icons/add_circle_black.svg";
 
-import { Project, allProjects, addProject, removeProject, getProjectById, getTasksWithTag, allTags } from "./classes.js";
+import { allProjects,
+         addProject,
+         removeProject,
+         getProjectById,
+         getTasksWithTag,
+         allTags,
+         getProject } from "./classes.js";
 import { buildTaskElement } from "./tasks.js";
 import { buildProjectElement } from "./projects.js";
 import { buildTags } from "./tags.js";
@@ -16,8 +22,10 @@ let deleteContext = {
     type: null,
     id: null
 };
-window.currentProject = currentProject;
 
+console.log('allTags', allTags);
+
+// STOP - renderTags(tagsList.tagsArr) is not referencing anything...
 
 // ------ CONSTS -------
 
@@ -27,20 +35,19 @@ const sideProjects = document.querySelector('.side-projects');
 
 // Consts for Modals
 const deleteModal = document.querySelector('.delete-modal');
-const delButton = document.querySelector('.delete-btn');
 const delModalHeader = document.querySelector('.modal-header-h1');
 const delModalText = document.querySelector('.modal-text');
 const delModalTitle = document.querySelector('#modalTitle');
 const modalContent = document.querySelector('.modal-content');
 const parentHeader = document.getElementById('parent-header');
 const taskModal = document.querySelector('.task-modal');
+const projectTitle = document.getElementById('project-title');
 const submitButton = document.querySelector('.modal-save-btn');
 const taskDeleteBtn = document.querySelector('.task-delete');
 const commentsModal = document.getElementById('modal-comments');
 const tagsModal = document.getElementById('modal-tags');
 const sideBar = document.querySelector('.sidebar');
 const projectModal = document.querySelector('.project-modal');
-const projectSubmitButton = document.querySelector('.project-save-btn');
 const tagModal = document.querySelector('.tag-modal');
 const tagForm = document.getElementById('tag-form');
 const tagHeader = document.querySelector('.tags-header');
@@ -53,10 +60,40 @@ const projectForm = document.getElementById('project-form');
 const dateInput = document.getElementById('task-date');
 const taskTags = document.getElementById('task-tags');
 
+
+// ----- LocalStorage ------
+// Test for available storage
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      e.name === "QuotaExceededError" &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  };
+};
+
+// if (storageAvailable("localStorage")) {
+//   console.log('storage active');
+// } else {
+//   console.log('storage inactive');
+// }
+
+// storageAvailable("localStorage");
+
 // ------ FUNCTIONS ------
 
 // Render tags in tags sidebar
-function renderTags(tags) {
+function renderTagsList(tags) {
     
     tagHeader.innerHTML = '<h3 class="tags-header">Tags</h3>';
 
@@ -70,19 +107,56 @@ function renderTags(tags) {
     });
 };
 
-// Render the tasks within each project to mainContent.
-function renderTask(project) {
-    // Check if project exists otherwise return;
-    if (!project) {
+function renderTags(tagsList, tag) {
+
+    // Check if tagsList exists otherwise return;
+    if (!tagsList) {
         mainContent.innerHTML = '';
         parentHeader.innerHTML = '';
             return;
     }
     // Clear mainContent before re rendering
+    mainContent.innerHTML = '';
+    parentHeader.innerHTML = `Tags / ${tag}`; 
+
+    // Create Project header, main-line and section.
+    const projectHeader = document.createElement('h1');
+        projectHeader.textContent = `${tag}`;
+            mainContent.append(projectHeader);
+
+    const mainLine = document.createElement('div');
+        mainLine.setAttribute('class', 'main-line');
+            mainContent.append(mainLine);
+
+    const section = document.createElement('div');
+        section.setAttribute('class', 'section');
+            mainContent.append(section);
+
+    // Loop over each task and display results.
+    tagsList.forEach((task) => {
+        const taskElement = buildTaskElement(task);
+            section.append(taskElement);
+    });
+
+    const endLine = document.createElement('div');
+        endLine.setAttribute('class', 'end-line');
+            mainContent.append(endLine);
+};
+
+// Render the tasks within each project to mainContent.
+function renderTask(project) {
+    
+    // Check if project exists otherwise return;
+    if (!project) {
+        mainContent.innerHTML = '<h1>Add a new project to get started!</h1><div class="main-line"></div>';
+        parentHeader.innerHTML = '';
+            return;
+    };
+    // Clear mainContent before re rendering
         mainContent.innerHTML = '';
 
     //Update Headers
-        parentHeader.innerHTML = `${project.title}`;
+        parentHeader.innerHTML = `Projects / ${project.title}`;
 
     // Create Project header, main-line and section.
     const projectHeader = document.createElement('h1');
@@ -119,12 +193,18 @@ function renderTask(project) {
             mainTaskBtn.append(taskImg);
 };
 
+// Parse projects from localStorage.
+function parseProjects() {
+    let projects = getProject();
+
+    currentProject = projects[0];
+};
+
 // Render all projects
 function renderProjects() {
     // Clear sideProjects for re render.
     sideProjects.innerHTML = '<h3 class="projects-header">My Projects</h3>';
 
-    // Might be able to remove index from this forEach when id is used to load delModal etc.
     allProjects.forEach((project, index) => {
         const projectElement = buildProjectElement(project, index);
 
@@ -152,24 +232,17 @@ function openDelModal(id, type) {
 
     if (type === 'Project') {
         let targetProject = getProjectById(allProjects, id);
-        // delModalHeader.innerHTML = `<h1>Delete Project</h1>`;
-        // delModalText.innerHTML = `<p>Are you sure you want to delete this project?</p>`;
-        // delModalTitle.innerHTML = `<h3>${targetProject.title}</h3>`;
         updateModal(targetProject.title, type);
             deleteContext.type = "Project";
             deleteContext.id = id;
+
     } else if (type === 'Tag') {
         let tagName = allTags.getTagById(id);
-        // delModalHeader.innerHTML = `<h1>Delete Tag</h1>`;
-        // delModalText.innerHTML = `<p>Are you sure you want to delete this tag?</p>`;
-        // delModalTitle.innerHTML = `<h3>${tagName.name}</h3>`;
         updateModal(tagName.name, type);
             deleteContext.type = "Tag";
             deleteContext.id = id;
+
     } else {
-        // delModalTitle.innerHTML = `<h3>${currentTask.title}</h3>`;
-        // delModalHeader.innerHTML = `<h1>Delete Task</h1>`;
-        // delModalText.innerHTML = `<p>Are you sure you want to delete this task?</p>`;
         updateModal(currentTask.title, type);
             deleteContext.type = "Task";
             deleteContext.id = id;
@@ -216,8 +289,14 @@ function deleteProjectOrTask(deleteContext) {
     } else {
     let targetTagString = targetId.toString();
         tagsList.removeTag(targetTagString);
+
+        // Re render current project is all tags deleted.
+        if (tagsList.tagsArr.length === 0) {
+            renderTask(currentProject)
+        };
+
             closeModal();
-                renderTags(tagsList.tagsArr);
+                renderTagsList(tagsList.tagsArr);
     };
 };
 
@@ -232,6 +311,7 @@ function closeModal() {
     // resetForm after editing form is closed and add comments header back.
     taskForm.reset();
         commentsModal.innerHTML = '<label class="label-text" for="task-comments">Saved Comments:</label>';
+        tagsModal.innerHTML = '<label class="label-text" for="task-tags">Saved Tags:</label>';
 
 };
 
@@ -247,9 +327,11 @@ function saveModal(taskId) {
 function openTaskModal(taskId) {
     taskModal.style.display = 'block';
     document.body.classList.add('modal-open');
+    
+    // Update current project title in taskModal
+    projectTitle.innerHTML = `<p class="label-text">Project: ${currentProject.title}</p>`;
 
     // Attach task-id to submit button on modal task form.
-    // Might not need this is using currentTask as reference but its here for now on submit button.
     submitButton.setAttribute('data-task-id', `${taskId}`);
 
     // Attach id to submit and delete buttons in task modal.
@@ -269,13 +351,6 @@ function loadCurrentTags(tagsArray) {
         blankOption.selected = true;
         blankOption.disabled = true;
             taskTags.append(blankOption);
-
-        // STOP -- Above works but fires a null value as a new tag if it
-        // remains selected, i feel like this can be adjusted when tags
-        // are loaded into the form for submitting? if null, change to empty
-        // then fire. Check how saved comments being empty works?
-        //
-        // If add task modal is opened for a new task, pressing delete button fires an error.
 
     tagsArray.forEach(tag => {
         const option = document.createElement('option')
@@ -302,10 +377,7 @@ function submitProjectForm() {
 
     const projectTitle = projectFormData.get('project-name');
 
-    // Instance of a new Project
-    let newProject = new Project(projectTitle);
-
-    addProject(newProject);
+    addProject(projectTitle);
 
     currentProject = allProjects[0];
 
@@ -336,7 +408,7 @@ function submitTagForm() {
 
     closeTagModal();
 
-    renderTags(allTags.tagsArr);
+    renderTagsList(allTags.tagsArr);
 };
 
 // Populate form with unique task data for editing.
@@ -434,7 +506,7 @@ function checkValidity(dateObj) {
 
         if (!taskForm.checkValidity()) {
             taskForm.reportValidity();
-            console.log('failed validity');
+            // console.log('failed validity');
             return false;
         };
         return true;
@@ -442,8 +514,7 @@ function checkValidity(dateObj) {
 
 function addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId) {
     // Add new task or update existing task using task ID.
-    console.log(taskId);
-    if (taskId == 'undefined') {
+    if (taskId === 'undefined') {
         currentProject.addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments);
     } else {
         currentProject.addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId);
@@ -456,7 +527,7 @@ function addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, tas
 function submitForm() {
     // // Get task-id from attribute added when form loaded.
     const modalSaveBtn = document.querySelector('.modal-save-btn');
-    let taskId = modalSaveBtn.getAttribute('task-id');
+    let taskId = modalSaveBtn.getAttribute('data-task-id');
 
     let existingComments = document.querySelectorAll('.saved-comment');
     let existingTags = document.querySelectorAll('.saved-tag');
@@ -470,9 +541,11 @@ function submitForm() {
         const formDate = formData.get('task-date');
         const taskPriority = formData.get('task-priority');
             // Pull new tags
-            const newTags = formData.get('task-tags');
-            // Push new tags to existing tags
-            if (newTags === '') {
+            let newTags = formData.get('task-tags');
+            // Push new tags to existing tags, check if new tag is not null ie the placeholder tag
+            if (newTags === null) {
+                newTags = ''
+            } else if (newTags === '') {
             } else {
                 existingTagsArray.push(newTags);
             }
@@ -488,17 +561,14 @@ function submitForm() {
             } 
                 // Update taskComments to use as arg for addOrEditTask
                 const taskComments = existingCommentsArray;
-
+            
             const dateObj = parseISO(formDate);
 
                 // checkValidity() returns a true or false depending on validity check
-                // if it returns false, this return statement stops the submit event.
+                // if it returns false, this return statement ends the submit event.
                 if (!checkValidity(dateObj)) return;
 
             let taskDate = format((dateObj), 'dd-MM-yyyy');
-
-            // Set taskId to currentTask.id.
-            taskId = currentTask.id;
 
     // Add or Edit task based formData and taskId
     addOrEditTask(taskName, taskDesc, taskDate, taskPriority, taskTags, taskComments, taskId);
@@ -510,6 +580,11 @@ function submitForm() {
             renderTask(currentProject);
 };
 
+// STOP  -- Clicking projects doesn't sort them by priority. Check it out.
+//
+//          It still appears sometimes new projects aren't saved as new Project instances
+//          Something happens during page refresh, stored projects don't restore as Project instances. Cant reproduce right now.
+//          Above statements is what ive tried...
 
 // ------ EVENTS ------
 
@@ -520,9 +595,13 @@ function submitForm() {
 sideBar.addEventListener('click', (event) => {
     const target = event.target;
 
-    // Add Task event
-    if (target.classList.contains("add-task-event")) {
-        openTaskModal();
+    // Conditional to check if at least one project exists.
+    if (allProjects.length != 0) {
+
+        // Add Task event if at least one project exists.
+        if (target.classList.contains("add-task-event")) {
+            openTaskModal();
+        };
     };
     // Add Project event 
     if (target.classList.contains("add-project-event")) {
@@ -579,16 +658,11 @@ sideTags.addEventListener('click', (event) => {
 
     const getTag = allTags.getTagById(tagId);
 
-    // I have the specific tag to load all posts of.
-    // Iterate through each Project.tasks in order and render any tasks
-    // that matches the tag name.
-
-    // console.log(getTag.name);
-
-    // Data send to classes.js to match tag against each task.
-    getTasksWithTag(getTag.name);
-    
-    // Here build/render any returned tasks.
+    if (event.target.classList.contains('tag-name')) {
+        // Data send to classes.js to match tag against each task.
+        // Pass returned task list and tag name to renderTags.
+        renderTags(getTasksWithTag(getTag.name), getTag.name);
+    };
 });
 
 // Event Delegation for modalContent
@@ -648,6 +722,9 @@ mainContent.addEventListener('click', (event) => {
     const target = event.target;
     let taskId = event.target.dataset.taskId;
 
+    // If no projects exist, don't fire click event on mainContent;
+    if (currentProject === undefined) return;
+
     // Set currentTask state
     currentTask = currentProject.getTask(taskId);
 
@@ -675,42 +752,47 @@ taskModal.addEventListener('click', (event) => {
 
     let taskId = event.target.dataset.taskId;
 
+    // Nested if statement to avoid 'undefined' delegation applying to 
+    // submit button as well as delete button here.
+    if (taskId === 'undefined') {
+            if (event.target.classList.contains("delete-btn")) {
+                closeModal();
+        };
+    } else {
 
-    // Delete comments event
-    if (target.classList.contains("close-icon")) {
-        const commentIndex = event.target.dataset.index;
-
-        currentProject.removeComment(currentTask, commentIndex);
-
-        populateForm(currentTask);
-    };
-    // Close task modal window event
-    if (target.classList.contains("settings-icon")) {
-        closeModal();
-    };
-
-    // Delete tag event
-    if (target.classList.contains("close-tag")) {
-        
-        // Remove target tag from task, not from task array.
-        const tagIndex = event.target.dataset.index;
-
-        // console.log(tagIndex);
-        // console.log(target);
-        // console.log(currentTask);
-
-        currentTask.removeTag(currentTask, tagIndex);
-
-        populateForm(currentTask);
-
-    };
-        // Delete task event
+        // Delete task events
+        // Nested if statement is for this.
         if (event.target.classList.contains("delete-btn")) {
             const type = 'Task';
                 closeModal();
                 openDelModal(taskId, type);
         };
 
+        // Delete comments event
+        if (target.classList.contains("close-icon")) {
+            const commentIndex = event.target.dataset.index;
+
+            currentProject.removeComment(currentTask, commentIndex);
+
+            populateForm(currentTask);
+        };
+
+        // Close task modal window event
+        if (target.classList.contains("settings-icon")) {
+            closeModal();
+        };
+
+        // Delete tag event
+        if (target.classList.contains("close-tag")) {
+            
+            // Remove target tag from task, not from task array.
+            const tagIndex = event.target.dataset.index;
+
+            currentTask.removeTag(currentTask, tagIndex);
+
+            populateForm(currentTask);
+        };
+    };
 });
 
 // Form Events
@@ -727,6 +809,7 @@ taskForm.addEventListener('submit', function(event) {
 // ------ INITIALIZATION ------
 
 // Build Projects list and populate tasks.
-renderTags(tagsList.tagsArr);
+parseProjects();
+renderTagsList(tagsList.tagsArr);
 renderProjects();
 renderTask(currentProject);

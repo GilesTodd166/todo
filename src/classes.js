@@ -174,7 +174,7 @@ function setTag() {
 function getTags() {
     const stored = localStorage.getItem("tags");
 
-    if (!stored) return;
+    if (!stored) return new Tags();
 
     const rawTags = JSON.parse(stored);
 
@@ -187,29 +187,6 @@ function getTags() {
 
     return tagsInstance;
 };
-
-// allTags.addTag("TagOne");
-// allTags.addTag("TagTwo");
-
-// Instance of a new Project
-// let firstProject = new Project("My First Project");
-// let secondProject = new Project("My Second Project");
-// addProject(firstProject);
-// addProject(secondProject);
-
-// Makes firstProject globally scoped.
-// window.firstProject = firstProject;
-// window.secondProject = secondProject;
-
-// firstProject.addOrEditTask("Task One", "Description of the task saved", "03-05-2026", "Low", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-// firstProject.addOrEditTask("Task Two", "Description of the task saved", "03-05-2026", "High", [], ["A second comment", "Two comments"]);
-// firstProject.addOrEditTask("Task Three", "Description of the task saved", "03-05-2026", "Medium", ["TagOne", "TagTwo",], ["A single saved comment"]);
-
-// secondProject.addOrEditTask("2nd Project Task One", "Description of the task saved", "03-05-2026", "High", ["TagOne"], ["This is a comment saved on the task", "A second comment", "A third comment", "A fourth"]);
-// secondProject.addOrEditTask("2nd Project Task Two", "Description of the task saved", "03-05-2026", "Low", ["OneTag", "TagTwo",], ["A single saved comment"]);
-
-// storeProject(firstProject);
-// storeProject(secondProject);
 
 export { allProjects, 
          addProject, 
