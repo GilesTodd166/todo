@@ -23,10 +23,6 @@ let deleteContext = {
     id: null
 };
 
-console.log('allTags', allTags);
-
-// STOP - renderTags(tagsList.tagsArr) is not referencing anything...
-
 // ------ CONSTS -------
 
 // Consts for populating mainContent and sideProjects.
